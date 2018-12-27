@@ -21,6 +21,7 @@ export class AppComponent implements OnInit{
   richText : PIXI.Text;
   nbCollisions: number = 0;
   inCollision: boolean = false;
+  count: number = 0;
 
   constructor () {
     this.app = new PIXI.Application({ 
@@ -66,7 +67,9 @@ export class AppComponent implements OnInit{
           var mouseposition = this.app.renderer.plugins.interaction.mouse.global;
           this.bunny.x = mouseposition.x;
           this.bunny.y = mouseposition.y;
-          this.bunny.rotation += delta*0.02;
+          this.bunny2.scale.x = 1 + Math.sin(this.count) * 0.04;
+          this.bunny2.scale.y = 1 + Math.cos(this.count) * 0.04;
+          this.count += 0.1;
           if(this.collide(this.bunny,this.bunny2)) {
             this.bunny2.tint = 0xff0000;
             if(!this.inCollision) {
@@ -74,10 +77,12 @@ export class AppComponent implements OnInit{
               this.richText.text = "Collisions: " + this.nbCollisions;
               this.inCollision = true;
             }
+                
           }
           else {
             this.bunny2.tint = 0xAAAAAA;
             this.inCollision = false;
+            this.bunny.rotation += delta*0.02;
           }
         }
     ); 
