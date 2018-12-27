@@ -18,6 +18,9 @@ export class AppComponent implements OnInit{
   public app: PIXI.Application;
   bunny : PIXI.Sprite;
   bunny2 : PIXI.Sprite;
+  richText : PIXI.Text;
+  nbCollisions: number = 0;
+  inCollision: boolean = false;
 
   constructor () {
     this.app = new PIXI.Application({ 
@@ -25,6 +28,26 @@ export class AppComponent implements OnInit{
       height: 600,
       backgroundColor: 0x1099bb
     });
+    
+    var style = new PIXI.TextStyle({
+      fontFamily: 'Arial',
+      fontSize: 36,
+      fontStyle: 'italic',
+      fontWeight: 'bold',
+      fill: ['#ffffff', '#00ff99'], // gradient
+      stroke: '#4a1850',
+      strokeThickness: 5,
+      dropShadow: true,
+      dropShadowColor: '#000000',
+      dropShadowBlur: 4,
+      dropShadowAngle: Math.PI / 6,
+      dropShadowDistance: 6,
+      wordWrap: true,
+      wordWrapWidth: 440
+    });
+    this.richText = new PIXI.Text('Collisions: ', style);
+    this.richText.x = 30;
+    this.richText.y = 90;
     this.bunny = PIXI.Sprite.fromImage('/assets/bunny.jpg');
     this.bunny.anchor.set(0.5);
     this.bunny2 = new PIXI.Sprite(this.bunny.texture);
@@ -37,16 +60,25 @@ export class AppComponent implements OnInit{
     this.bunny2.tint = Math.random() * 0xFFFFFF;
     this.app.stage.addChild(this.bunny);
     this.app.stage.addChild(this.bunny2);
+    this.app.stage.addChild(this.richText);
     this.app.ticker.add((delta) =>
         {
           var mouseposition = this.app.renderer.plugins.interaction.mouse.global;
           this.bunny.x = mouseposition.x;
           this.bunny.y = mouseposition.y;
           this.bunny.rotation += delta*0.02;
-          if(this.collide(this.bunny,this.bunny2))
+          if(this.collide(this.bunny,this.bunny2)) {
             this.bunny2.tint = 0xff0000;
-          else
+            if(!this.inCollision) {
+              this.nbCollisions++;
+              this.richText.text = "Collisions: " + this.nbCollisions;
+              this.inCollision = true;
+            }
+          }
+          else {
             this.bunny2.tint = 0xAAAAAA;
+            this.inCollision = false;
+          }
         }
     ); 
 
