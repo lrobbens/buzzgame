@@ -28,6 +28,7 @@
     "pixi.js": "^4.8.4",
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
+    "yy-intersects": "^1.0.8",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
