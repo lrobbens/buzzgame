@@ -25,11 +25,12 @@ export class AppComponent implements OnInit{
 
   constructor () {
     this.app = new PIXI.Application({ 
-      width: 800,
-      height: 600,
-      backgroundColor: 0x1099bb
+      width: window.innerWidth,
+      height: window.innerHeight,
+      backgroundColor: 0x1099bb,
     });
-    
+
+
     var style = new PIXI.TextStyle({
       fontFamily: 'Arial',
       fontSize: 36,
@@ -46,6 +47,11 @@ export class AppComponent implements OnInit{
       wordWrap: true,
       wordWrapWidth: 440
     });
+
+    window.addEventListener("resize", () => {
+      this.resize();
+    });
+
     this.richText = new PIXI.Text('Collisions: ', style);
     this.richText.x = 30;
     this.richText.y = 90;
@@ -99,5 +105,13 @@ export class AppComponent implements OnInit{
 
   ngOnInit() {
     this.pixiContainer.nativeElement.appendChild(this.app.view);
+  }
+
+  resize() {
+      this.app.renderer.resize(window.innerWidth, window.innerHeight);
+      this.bunny.x = this.app.screen.width / 2;
+      this.bunny.y = this.app.screen.height / 2;
+      this.bunny2.x = this.app.screen.width / 2;
+      this.bunny2.y = this.app.screen.height / 2;
   }
 }
