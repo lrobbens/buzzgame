@@ -5,16 +5,18 @@ import { stagger } from '@angular/animations';
 declare var PIXI: any;
 
 
-export class BubbleFactory {
+export class AnimatedSpriteFactory {
     animatedSprites: PIXI.extras.AnimatedSprite [] = [];
     frames: PIXI.Texture [];
     cpt: number = 0;
-    constructor(frames: PIXI.Texture[]) {
-        this.frames = frames;
+    stage: PIXI.Container;
+
+    constructor(stage : PIXI.Container) {
+        this.stage = stage;
     }  
     
-    addBubble(x: number, y: number, color: number, speed: number): PIXI.extras.AnimatedSprite {
-        var animatedSprite = new PIXI.extras.AnimatedSprite(this.frames);
+    addAnimatedSprite(frames: PIXI.Texture[], x: number, y: number, color: number, speed: number): PIXI.extras.AnimatedSprite {
+        var animatedSprite = new PIXI.extras.AnimatedSprite(frames);
         animatedSprite.anchor.set(0.5);
         animatedSprite.animationSpeed = speed;
         animatedSprite.x = x;
@@ -25,10 +27,10 @@ export class BubbleFactory {
         return animatedSprite;
     }
 
-    playBubbles(stage : PIXI.Container) {
+    play(stage : PIXI.Container) {
         this.animatedSprites.forEach( bubble => {
             bubble.play();
-            stage.addChild(bubble);
+            this.stage.addChild(bubble);
         })
     }
 

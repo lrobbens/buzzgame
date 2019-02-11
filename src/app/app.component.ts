@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { Application, Texture, Graphics, RenderTexture} from 'pixi.js';
 import { CollisionService } from './services/collision.service';
-import { BubbleFactory } from './gameModels/bubbleFactory';
+import { AnimatedSpriteFactory } from './gameModels/AnimateSpriteFactory';
 
 declare var PIXI: any;
 
@@ -18,17 +18,19 @@ export class AppComponent implements OnInit{
 
   public app: PIXI.Application;
   bunny : PIXI.Sprite;
-  animatedSprite : PIXI.extras.AnimatedSprite;
+  bubbleMouse : PIXI.extras.AnimatedSprite;
   textures : Array<PIXI.Texture> = [];
   richText : PIXI.Text;
   nbCollisions: number = 0;
   previousInCollision: boolean = false;
   count: number = 0;
-  bubbleFatory :BubbleFactory;
+  bubbleFatory :AnimatedSpriteFactory;
   cpt : number = 0;
-  bubbleFactory : BubbleFactory;
+  bubbleFactory : AnimatedSpriteFactory;
   graphics: PIXI.Graphics = new PIXI.Graphics();
   frames = [];
+  oldScreenWidth: number = window.innerWidth;
+  oldScreenHeight: number = window.innerHeight;
 
   constructor (private collisionService : CollisionService) {
     this.app = new PIXI.Application({ 
@@ -82,16 +84,16 @@ export class AppComponent implements OnInit{
     this.app.ticker.add((delta) =>
         {
           var mouseposition = this.app.renderer.plugins.interaction.mouse.global;
-          if(this.animatedSprite) {
-            this.animatedSprite.x = mouseposition.x;
-            this.animatedSprite.y = mouseposition.y;
+          if(this.bubbleMouse) {
+            this.bubbleMouse.x = mouseposition.x;
+            this.bubbleMouse.y = mouseposition.y;
             this.graphics.x = mouseposition.x ;
             this.graphics.y = mouseposition.y-20;
           }
           this.bunny.scale.x = 1 + Math.sin(this.count) * 0.04;
           this.bunny.scale.y = 1 + Math.cos(this.count) * 0.04;
           this.count += 0.1;
-          if(this.animatedSprite && this.collisionService.collide(this.animatedSprite,this.bunny)) {
+          if(this.bubbleMouse && this.collisionService.collide(this.bubbleMouse,this.bunny)) {
             this.bunny.tint = 0xff0000;
             if(!this.previousInCollision) {
               this.nbCollisions++;
@@ -125,15 +127,15 @@ export class AppComponent implements OnInit{
 
     beginGame() {
         this.fillFrames();
-        this.bubbleFactory = new BubbleFactory(this.frames);
-        this.animatedSprite = this.bubbleFactory.addBubble(50,50, 0x0bbbff, .5);
-        this.bubbleFactory.addBubble(100, 100, 0x00ff00, 0.6);
-        this.bubbleFactory.addBubble(200,150, 0xffe6f0, .2);
-        this.bubbleFactory.addBubble(300,500, 0x0ffff0, 0.4);
-        this.bubbleFactory.addBubble(100,500, 0xffff66, .7);
-        this.bubbleFactory.addBubble(400,400, 0x0bbbff, 0.35);
-        this.bubbleFactory.addBubble(600,600, 0x800000, .5);
-        this.bubbleFactory.playBubbles(this.app.stage);           
+        this.bubbleFactory = new AnimatedSpriteFactory(this.app.stage);
+        this.bubbleMouse = this.bubbleFactory.addAnimatedSprite(this.frames, 50,50, 0x0bbbff, .5);
+        this.bubbleFactory.addAnimatedSprite(this.frames, 100, 100, Math.random() * 0xFFFFFF, 0.6);
+        this.bubbleFactory.addAnimatedSprite(this.frames, 200,150, Math.random() * 0xFFFFFF, .2);
+        this.bubbleFactory.addAnimatedSprite(this.frames, 300,500, Math.random() * 0xFFFFFF, 0.4);
+        this.bubbleFactory.addAnimatedSprite(this.frames, 100,500, Math.random() * 0xFFFFFF, .7);
+        this.bubbleFactory.addAnimatedSprite(this.frames, 400,400, Math.random() * 0xFFFFFF, 0.35);
+        this.bubbleFactory.addAnimatedSprite(this.frames, 600,600, Math.random() * 0xFFFFFF, .5);
+        this.bubbleFactory.play(this.app.stage);           
       }
 
       fillFrames(){
